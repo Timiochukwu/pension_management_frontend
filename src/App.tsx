@@ -21,6 +21,7 @@ import { MembersPage } from './pages/members/MembersPage';
 import { ContributionsPage } from './pages/contributions/ContributionsPage';
 import { BenefitsPage } from './pages/benefits/BenefitsPage';
 import { ReportsPage } from './pages/reports/ReportsPage';
+import { SettingsPage } from './pages/settings/SettingsPage';
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -96,6 +97,16 @@ function App() {
               <ProtectedRoute>
                 <DashboardLayout>
                   <ReportsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <SettingsPage />
                 </DashboardLayout>
               </ProtectedRoute>
             }

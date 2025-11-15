@@ -1,0 +1,40 @@
+# Docker Compose for Frontend Development Only
+# Lightweight setup for frontend development with mock backend
+
+version: '3.8'
+
+services:
+  # Frontend - React Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: pension-frontend-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    command: npm run dev -- --host 0.0.0.0
+
+  # Optional: JSON Server for Mock API (if backend not ready)
+  mock-api:
+    image: clue/json-server
+    container_name: pension-mock-api
+    ports:
+      - "3000:80"
+    volumes:
+      - ./docker/mock-data:/data
+    command: -H 0.0.0.0 -p 80 -w /data/db.json
+    restart: unless-stopped
+
+networks:
+  default:
+    name: pension-dev-network

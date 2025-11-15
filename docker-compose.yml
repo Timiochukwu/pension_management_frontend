@@ -1,0 +1,130 @@
+# Docker Compose for Pension Management System
+# Complete setup with frontend, backend, database, and cache
+
+version: '3.8'
+
+services:
+  # Frontend - React Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: pension-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - NODE_ENV=development
+    networks:
+      - pension-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # Backend - Spring Boot Application (Add this to your backend repo)
+  backend:
+    image: openjdk:17-alpine
+    container_name: pension-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../pension_management_system:/app
+    working_dir: /app
+    command: ./mvnw spring-boot:run
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/pension_db?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=pension_user
+      - SPRING_DATASOURCE_PASSWORD=pension_password
+      - SPRING_REDIS_HOST=cache
+      - SPRING_REDIS_PORT=6379
+    networks:
+      - pension-network
+    depends_on:
+      - database
+      - cache
+    restart: unless-stopped
+
+  # Database - MySQL
+  database:
+    image: mysql:8.0
+    container_name: pension-database
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=pension_db
+      - MYSQL_USER=pension_user
+      - MYSQL_PASSWORD=pension_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pension-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache - Redis
+  cache:
+    image: redis:7-alpine
+    container_name: pension-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - pension-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Database Admin - phpMyAdmin (Optional)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: pension-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=database
+      - PMA_PORT=3306
+      - PMA_USER=pension_user
+      - PMA_PASSWORD=pension_password
+    networks:
+      - pension-network
+    depends_on:
+      - database
+    restart: unless-stopped
+
+  # Cache Admin - Redis Commander (Optional)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: pension-redis-commander
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:cache:6379
+    networks:
+      - pension-network
+    depends_on:
+      - cache
+    restart: unless-stopped
+
+networks:
+  pension-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local

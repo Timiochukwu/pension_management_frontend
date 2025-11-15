@@ -14,12 +14,14 @@ import {
   FileText,
   CreditCard,
   BarChart3,
+  Settings,
   LogOut,
   Menu,
   X
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { ThemeToggle } from './ThemeToggle';
+import { NotificationPanel } from './NotificationPanel';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -38,6 +40,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     { name: 'Benefit Claims', href: '/benefits', icon: FileText },
     { name: 'Payments', href: '/payments', icon: CreditCard },
     { name: 'Reports', href: '/reports', icon: BarChart3 },
+    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -138,9 +141,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               {navigation.find((item) => isActive(item.href))?.name || 'Dashboard'}
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <NotificationPanel />
             <ThemeToggle />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="hidden md:block text-sm text-gray-600 dark:text-gray-400">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
