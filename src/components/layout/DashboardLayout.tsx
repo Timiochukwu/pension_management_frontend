@@ -14,12 +14,12 @@ import {
   FileText,
   CreditCard,
   BarChart3,
-  Settings,
   LogOut,
   Menu,
   X
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { ThemeToggle } from './ThemeToggle';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -139,7 +139,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
+            <ThemeToggle />
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',

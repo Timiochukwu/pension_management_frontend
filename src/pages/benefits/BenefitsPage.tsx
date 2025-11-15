@@ -20,7 +20,7 @@ export const BenefitsPage: React.FC = () => {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants = { APPROVED: 'success', PENDING: 'warning', REJECTED: 'danger', PAID: 'success' };
+    const variants = { APPROVED: 'success', PENDING: 'warning', REJECTED: 'danger', PAID: 'success' } as const;
     return <Badge variant={variants[status as keyof typeof variants] || 'default'}>{status}</Badge>;
   };
 

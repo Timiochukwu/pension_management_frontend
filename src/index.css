@@ -5,12 +5,9 @@
 
 /* Custom FinTech Styles */
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
     @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    @apply dark:bg-gray-900 dark:text-gray-100;
   }
 
   /* Custom scrollbar */

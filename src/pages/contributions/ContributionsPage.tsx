@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { DollarSign } from 'lucide-react';
 import { Card, CardHeader } from '../../components/ui/Card';
 import { Table, TableHeader, TableBody, TableRow, TableCell } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
@@ -20,8 +19,8 @@ export const ContributionsPage: React.FC = () => {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants = { COMPLETED: 'success', PENDING: 'warning', FAILED: 'danger' };
-    return <Badge variant={variants[status as keyof typeof variants]}>{status}</Badge>;
+    const variants = { COMPLETED: 'success', PENDING: 'warning', FAILED: 'danger' } as const;
+    return <Badge variant={variants[status as keyof typeof variants] || 'default'}>{status}</Badge>;
   };
 
   return (

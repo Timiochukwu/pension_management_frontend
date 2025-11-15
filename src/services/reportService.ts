@@ -5,7 +5,7 @@
  */
 
 import apiClient from './api';
-import type { Report, ReportRequest, PaginatedResponse } from '../types';
+import type { Report, ReportRequest } from '../types';
 
 export const getAllReports = async (): Promise<Report[]> => {
   const response = await apiClient.get<Report[]>('/reports');

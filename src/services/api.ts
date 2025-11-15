@@ -5,7 +5,7 @@
  * Handles authentication, error handling, and request/response interceptors
  */
 
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import toast from 'react-hot-toast';
 import type { ErrorResponse } from '../types';
 

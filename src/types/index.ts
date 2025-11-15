@@ -18,12 +18,14 @@ export interface User {
   createdAt: string;
 }
 
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  MANAGER = 'MANAGER',
-  MEMBER = 'MEMBER',
-  EMPLOYER = 'EMPLOYER'
-}
+export const UserRole = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  MEMBER: 'MEMBER',
+  EMPLOYER: 'EMPLOYER'
+} as const;
+
+export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export interface LoginRequest {
   email: string;
@@ -71,25 +73,31 @@ export interface Member {
   updatedAt: string;
 }
 
-export enum EmploymentStatus {
-  EMPLOYED = 'EMPLOYED',
-  SELF_EMPLOYED = 'SELF_EMPLOYED',
-  UNEMPLOYED = 'UNEMPLOYED',
-  RETIRED = 'RETIRED'
-}
+export const EmploymentStatus = {
+  EMPLOYED: 'EMPLOYED',
+  SELF_EMPLOYED: 'SELF_EMPLOYED',
+  UNEMPLOYED: 'UNEMPLOYED',
+  RETIRED: 'RETIRED'
+} as const;
 
-export enum AccountType {
-  INDIVIDUAL = 'INDIVIDUAL',
-  CORPORATE = 'CORPORATE',
-  GOVERNMENT = 'GOVERNMENT'
-}
+export type EmploymentStatus = typeof EmploymentStatus[keyof typeof EmploymentStatus];
 
-export enum AccountStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  SUSPENDED = 'SUSPENDED',
-  CLOSED = 'CLOSED'
-}
+export const AccountType = {
+  INDIVIDUAL: 'INDIVIDUAL',
+  CORPORATE: 'CORPORATE',
+  GOVERNMENT: 'GOVERNMENT'
+} as const;
+
+export type AccountType = typeof AccountType[keyof typeof AccountType];
+
+export const AccountStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  CLOSED: 'CLOSED'
+} as const;
+
+export type AccountStatus = typeof AccountStatus[keyof typeof AccountStatus];
 
 export interface MemberRequest {
   firstName: string;
@@ -125,19 +133,23 @@ export interface Contribution {
   createdAt: string;
 }
 
-export enum ContributionType {
-  REGULAR = 'REGULAR',
-  VOLUNTARY = 'VOLUNTARY',
-  EMPLOYER = 'EMPLOYER',
-  GOVERNMENT_MATCHING = 'GOVERNMENT_MATCHING'
-}
+export const ContributionType = {
+  REGULAR: 'REGULAR',
+  VOLUNTARY: 'VOLUNTARY',
+  EMPLOYER: 'EMPLOYER',
+  GOVERNMENT_MATCHING: 'GOVERNMENT_MATCHING'
+} as const;
 
-export enum ContributionStatus {
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  REVERSED = 'REVERSED'
-}
+export type ContributionType = typeof ContributionType[keyof typeof ContributionType];
+
+export const ContributionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  REVERSED: 'REVERSED'
+} as const;
+
+export type ContributionStatus = typeof ContributionStatus[keyof typeof ContributionStatus];
 
 export interface ContributionRequest {
   memberId: number;
@@ -171,22 +183,26 @@ export interface BenefitClaim {
   updatedAt: string;
 }
 
-export enum ClaimType {
-  RETIREMENT = 'RETIREMENT',
-  WITHDRAWAL = 'WITHDRAWAL',
-  TEMPORARY = 'TEMPORARY',
-  DISABILITY = 'DISABILITY',
-  DEATH = 'DEATH'
-}
+export const ClaimType = {
+  RETIREMENT: 'RETIREMENT',
+  WITHDRAWAL: 'WITHDRAWAL',
+  TEMPORARY: 'TEMPORARY',
+  DISABILITY: 'DISABILITY',
+  DEATH: 'DEATH'
+} as const;
 
-export enum ClaimStatus {
-  PENDING = 'PENDING',
-  UNDER_REVIEW = 'UNDER_REVIEW',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-  PAID = 'PAID',
-  CANCELLED = 'CANCELLED'
-}
+export type ClaimType = typeof ClaimType[keyof typeof ClaimType];
+
+export const ClaimStatus = {
+  PENDING: 'PENDING',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED'
+} as const;
+
+export type ClaimStatus = typeof ClaimStatus[keyof typeof ClaimStatus];
 
 export interface BenefitClaimRequest {
   memberId: number;
@@ -218,17 +234,21 @@ export interface Payment {
   updatedAt: string;
 }
 
-export enum PaymentGateway {
-  PAYSTACK = 'PAYSTACK',
-  FLUTTERWAVE = 'FLUTTERWAVE'
-}
+export const PaymentGateway = {
+  PAYSTACK: 'PAYSTACK',
+  FLUTTERWAVE: 'FLUTTERWAVE'
+} as const;
 
-export enum PaymentStatus {
-  PENDING = 'PENDING',
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
-}
+export type PaymentGateway = typeof PaymentGateway[keyof typeof PaymentGateway];
+
+export const PaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const;
+
+export type PaymentStatus = typeof PaymentStatus[keyof typeof PaymentStatus];
 
 export interface PaymentRequest {
   memberId: number;
@@ -254,25 +274,31 @@ export interface Report {
   status: ReportStatus;
 }
 
-export enum ReportType {
-  MEMBER_SUMMARY = 'MEMBER_SUMMARY',
-  CONTRIBUTION_ANALYSIS = 'CONTRIBUTION_ANALYSIS',
-  BENEFIT_CLAIMS = 'BENEFIT_CLAIMS',
-  FINANCIAL_OVERVIEW = 'FINANCIAL_OVERVIEW',
-  AUDIT_TRAIL = 'AUDIT_TRAIL'
-}
+export const ReportType = {
+  MEMBER_SUMMARY: 'MEMBER_SUMMARY',
+  CONTRIBUTION_ANALYSIS: 'CONTRIBUTION_ANALYSIS',
+  BENEFIT_CLAIMS: 'BENEFIT_CLAIMS',
+  FINANCIAL_OVERVIEW: 'FINANCIAL_OVERVIEW',
+  AUDIT_TRAIL: 'AUDIT_TRAIL'
+} as const;
 
-export enum FileFormat {
-  PDF = 'PDF',
-  EXCEL = 'EXCEL',
-  CSV = 'CSV'
-}
+export type ReportType = typeof ReportType[keyof typeof ReportType];
 
-export enum ReportStatus {
-  GENERATING = 'GENERATING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED'
-}
+export const FileFormat = {
+  PDF: 'PDF',
+  EXCEL: 'EXCEL',
+  CSV: 'CSV'
+} as const;
+
+export type FileFormat = typeof FileFormat[keyof typeof FileFormat];
+
+export const ReportStatus = {
+  GENERATING: 'GENERATING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const;
+
+export type ReportStatus = typeof ReportStatus[keyof typeof ReportStatus];
 
 export interface ReportRequest {
   reportType: ReportType;
