@@ -68,6 +68,10 @@ export const RegisterPage: React.FC = () => {
     setIsLoading(true);
     try {
       const { confirmPassword, ...registerData } = data;
+
+      // DEBUG: Log what we're sending to backend
+      console.log('📤 Sending registration data:', registerData);
+
       await registerService(registerData as RegisterRequest);
       toast.success('Registration successful! Please login.');
       navigate('/login');

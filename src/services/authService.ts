@@ -36,7 +36,12 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
  * Automatically logs in the user after registration
  */
 export const register = async (data: RegisterRequest): Promise<User> => {
+  // DEBUG: Log registration payload before sending
+  console.log('🚀 AuthService sending to /auth/register:', JSON.stringify(data, null, 2));
+
   const response = await apiClient.post<User>('/auth/register', data);
+
+  console.log('✅ Registration response:', response.data);
   return response.data;
 };
 
