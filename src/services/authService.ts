@@ -18,7 +18,8 @@ import type { LoginRequest, LoginResponse, RegisterRequest, User } from '../type
  * Stores token in localStorage for subsequent requests
  */
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
+  // Auth endpoints are at /api/auth (not /api/v1/auth)
+  const response = await apiClient.post<LoginResponse>('../auth/login', credentials);
 
   // Store token and user in localStorage
   if (response.data.token) {
@@ -39,7 +40,8 @@ export const register = async (data: RegisterRequest): Promise<User> => {
   // DEBUG: Log registration payload before sending
   console.log('🚀 AuthService sending to /auth/register:', JSON.stringify(data, null, 2));
 
-  const response = await apiClient.post<User>('/auth/register', data);
+  // Auth endpoints are at /api/auth (not /api/v1/auth)
+  const response = await apiClient.post<User>('../auth/register', data);
 
   console.log('✅ Registration response:', response.data);
   return response.data;
