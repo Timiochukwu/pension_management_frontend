@@ -17,10 +17,14 @@ import type { RegisterRequest } from '../../types';
 
 // Validation schema
 const registerSchema = z.object({
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(50, 'Username must not exceed 50 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits'),
+  phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits').optional(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -215,6 +219,27 @@ export const RegisterPage: React.FC = () => {
                     <p className="mt-1 text-xs text-red-500">{errors.lastName.message}</p>
                   )}
                 </div>
+              </div>
+
+              {/* Username */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Username
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="johndoe"
+                    className="input-3d w-full pl-10 pr-3 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all outline-none text-gray-900 dark:text-white placeholder-gray-400 text-sm"
+                    {...register('username')}
+                  />
+                </div>
+                {errors.username && (
+                  <p className="mt-1 text-xs text-red-500">{errors.username.message}</p>
+                )}
               </div>
 
               {/* Email */}

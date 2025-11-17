@@ -20,7 +20,7 @@ import type { LoginRequest } from '../../types';
 
 // Validation schema using Zod
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  username: z.string().min(3, 'Username must be at least 3 characters'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -135,24 +135,24 @@ export const LoginPage: React.FC = () => {
 
             {/* Login Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {/* Email Input */}
+              {/* Username Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email Address
+                  Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type="email"
-                    placeholder="you@example.com"
+                    type="text"
+                    placeholder="johndoe"
                     className="input-3d w-full pl-11 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none text-gray-900 dark:text-white placeholder-gray-400"
-                    {...register('email')}
+                    {...register('username')}
                   />
                 </div>
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+                {errors.username && (
+                  <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
                 )}
               </div>
 
@@ -237,7 +237,7 @@ export const LoginPage: React.FC = () => {
             <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
               <p className="text-xs font-semibold text-blue-900 dark:text-blue-300 mb-2">Demo Credentials</p>
               <div className="space-y-1 text-xs text-blue-700 dark:text-blue-400">
-                <p>Email: admin@pension.com</p>
+                <p>Username: admin</p>
                 <p>Password: password123</p>
               </div>
             </div>

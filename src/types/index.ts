@@ -11,11 +11,13 @@
 
 export interface User {
   id: number;
+  username: string;
   email: string;
   firstName: string;
   lastName: string;
   role: UserRole;
-  createdAt: string;
+  phoneNumber?: string;
+  createdAt?: string;
 }
 
 export const UserRole = {
@@ -28,22 +30,24 @@ export const UserRole = {
 export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface LoginResponse {
   token: string;
-  tokenType: string;
+  type: string;
+  username: string;
   user: User;
 }
 
 export interface RegisterRequest {
+  username: string;
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string;
 }
 
 // ============================================
