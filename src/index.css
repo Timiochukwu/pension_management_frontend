@@ -134,107 +134,110 @@
   }
 }
 
-/* Premium FinTech Auth Styles */
+/* Modern 3D Auth Styles */
 @layer components {
-  /* Minimal Gradient Background */
+  /* Animated Gradient Background */
   .auth-gradient {
     background: linear-gradient(
       135deg,
-      #0f172a 0%,
-      #1e293b 50%,
-      #334155 100%
+      #667eea 0%,
+      #764ba2 25%,
+      #f093fb 50%,
+      #4facfe 75%,
+      #00f2fe 100%
     );
-    position: relative;
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
   }
 
-  .auth-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
-    pointer-events: none;
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
-  /* Premium Glass Card */
+  /* Glassmorphism Card Effects */
   .glass-card {
-    @apply backdrop-blur-sm bg-white/5 border border-white/10;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
   }
 
   .glass-card-3d {
-    @apply bg-white dark:bg-slate-900;
+    @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80;
     box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.03),
-      0 1px 2px rgba(0, 0, 0, 0.05),
-      0 10px 40px rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      0 8px 32px 0 rgba(31, 38, 135, 0.2),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+      0 2px 4px rgba(0, 0, 0, 0.05) inset;
+    transform: translateZ(0);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-card-3d:hover {
     box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.03),
-      0 2px 4px rgba(0, 0, 0, 0.05),
-      0 12px 48px rgba(0, 0, 0, 0.12);
+      0 12px 48px 0 rgba(31, 38, 135, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+      0 2px 4px rgba(0, 0, 0, 0.05) inset;
   }
 
-  /* Modern Input Effects */
+  /* 3D Input Effects */
   .input-3d {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(0, 0, 0, 0.04) inset;
+    transform: translateZ(0);
   }
 
   .input-3d:focus {
-    @apply ring-2 ring-blue-500/20 border-blue-500;
-    transform: translateY(0);
+    box-shadow:
+      0 4px 12px rgba(59, 130, 246, 0.15),
+      0 0 0 3px rgba(59, 130, 246, 0.1),
+      0 0 0 1px rgba(59, 130, 246, 0.2) inset;
+    transform: translateY(-1px);
   }
 
-  /* Premium Button Effects */
+  /* 3D Button Effects */
   .btn-3d {
+    box-shadow:
+      0 4px 14px 0 rgba(0, 118, 255, 0.39),
+      0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    transform: translateZ(0);
     position: relative;
     overflow: hidden;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-3d::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
   }
 
   .btn-3d:hover::before {
-    width: 300px;
-    height: 300px;
+    left: 100%;
   }
 
   .btn-3d:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+    box-shadow:
+      0 6px 20px 0 rgba(0, 118, 255, 0.5),
+      0 1px 3px rgba(0, 0, 0, 0.15) inset;
+    transform: translateY(-2px);
   }
 
   .btn-3d:active {
+    box-shadow:
+      0 2px 8px 0 rgba(0, 118, 255, 0.3),
+      0 1px 2px rgba(0, 0, 0, 0.1) inset;
     transform: translateY(0);
-  }
-
-  /* Feature Card */
-  .feature-card {
-    @apply backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-4;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .feature-card:hover {
-    @apply bg-white/10 border-white/20;
-    transform: translateX(4px);
   }
 }
 
