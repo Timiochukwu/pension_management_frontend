@@ -52,6 +52,11 @@ export const CreateMemberForm: React.FC<CreateMemberFormProps> = ({ onSuccess })
       toast.success('Member created successfully!');
       onSuccess();
     },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create member';
+      toast.error(errorMessage);
+      console.error('Member creation error:', error.response?.data);
+    },
   });
 
   return (

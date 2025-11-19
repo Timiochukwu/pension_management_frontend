@@ -5,7 +5,7 @@
  */
 
 import apiClient from './api';
-import type { DashboardStats, ChartData } from '../types';
+import type { DashboardStats, ChartData, RecentActivity } from '../types';
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {
   const response = await apiClient.get<DashboardStats>('/analytics/dashboard');
@@ -26,5 +26,12 @@ export const getMemberGrowth = async (): Promise<ChartData> => {
 
 export const getClaimAnalytics = async (): Promise<any> => {
   const response = await apiClient.get('/analytics/claims');
+  return response.data;
+};
+
+export const getRecentActivity = async (limit: number = 5): Promise<RecentActivity[]> => {
+  const response = await apiClient.get<RecentActivity[]>('/analytics/recent-activity', {
+    params: { limit }
+  });
   return response.data;
 };

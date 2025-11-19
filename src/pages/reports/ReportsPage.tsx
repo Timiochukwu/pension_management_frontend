@@ -6,15 +6,72 @@
  */
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { FileText, Download, BarChart3, FileSpreadsheet, Calendar, TrendingUp, Users, DollarSign, Gift } from 'lucide-react';
-import { getAllReports } from '../../services/reportService';
+import toast from 'react-hot-toast';
+import { getAllReports, generateReport, downloadReport } from '../../services/reportService';
+import type { ReportType, FileFormat } from '../../types';
 
 export const ReportsPage: React.FC = () => {
-  const { data: reports } = useQuery({
+  const { data: reports, refetch } = useQuery({
     queryKey: ['reports'],
     queryFn: getAllReports,
   });
+
+  // Mutation for generating reports
+  const generateMutation = useMutation({
+    mutationFn: generateReport,
+    onSuccess: async (report) => {
+      toast.success('Report generated successfully!');
+
+      // Download the report
+      try {
+        const blob = await downloadReport(report.id);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${report.title}.${report.fileFormat.toLowerCase()}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        refetch(); // Refresh the reports list
+      } catch (error) {
+        toast.error('Failed to download report');
+      }
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Failed to generate report';
+      toast.error(errorMessage);
+    },
+  });
+
+  // Handle report generation
+  const handleGenerateReport = (reportType: string, fileFormat: 'PDF' | 'EXCEL') => {
+    generateMutation.mutate({
+      reportType: reportType as ReportType,
+      fileFormat: fileFormat as FileFormat,
+    });
+  };
+
+  // Handle download of existing report
+  const handleDownloadReport = async (reportId: number, fileName: string, fileFormat: string) => {
+    try {
+      const blob = await downloadReport(reportId);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${fileName}.${fileFormat.toLowerCase()}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success('Report downloaded successfully!');
+    } catch (error) {
+      toast.error('Failed to download report');
+    }
+  };
 
   const reportTypes = [
     {
@@ -118,13 +175,21 @@ export const ReportsPage: React.FC = () => {
                     </div>
 
                     <div className="flex gap-3 mt-4">
-                      <button className="flex-1 btn-3d px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 transition-all duration-200 flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => handleGenerateReport(report.type, 'PDF')}
+                        disabled={generateMutation.isPending}
+                        className="flex-1 btn-3d px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+                      >
                         <FileText className="w-4 h-4" />
-                        PDF
+                        {generateMutation.isPending ? 'Generating...' : 'PDF'}
                       </button>
-                      <button className="flex-1 btn-3d px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => handleGenerateReport(report.type, 'EXCEL')}
+                        disabled={generateMutation.isPending}
+                        className="flex-1 btn-3d px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+                      >
                         <FileSpreadsheet className="w-4 h-4" />
-                        Excel
+                        {generateMutation.isPending ? 'Generating...' : 'Excel'}
                       </button>
                     </div>
                   </div>
@@ -170,7 +235,10 @@ export const ReportsPage: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <button className="btn-3d px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 flex items-center gap-2">
+                  <button
+                    onClick={() => handleDownloadReport(report.id, report.title, report.fileFormat)}
+                    className="btn-3d px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 flex items-center gap-2"
+                  >
                     <Download className="w-4 h-4" />
                     Download
                   </button>

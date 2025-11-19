@@ -8,9 +8,11 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, Edit, Trash2, Eye, Users, Filter, Download, UserPlus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Modal } from '../../components/ui/Modal';
 import { getAllMembers } from '../../services/memberService';
 import { CreateMemberForm } from '../../components/members/CreateMemberForm';
+import { exportMembers } from '../../utils/exportUtils';
 import type { Member } from '../../types';
 
 export const MembersPage: React.FC = () => {
@@ -22,6 +24,16 @@ export const MembersPage: React.FC = () => {
     queryKey: ['members', searchQuery],
     queryFn: () => getAllMembers({ query: searchQuery, page: 0, size: 20 }),
   });
+
+  // Handle export
+  const handleExport = () => {
+    if (!membersData?.content || membersData.content.length === 0) {
+      toast.error('No members to export');
+      return;
+    }
+    exportMembers(membersData.content, 'csv');
+    toast.success(`Exported ${membersData.content.length} members to CSV`);
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { color: string; gradient: string; text: string }> = {
@@ -87,7 +99,10 @@ export const MembersPage: React.FC = () => {
               </p>
             </div>
             <div className="flex gap-3">
-              <button className="btn-3d px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+              <button
+                onClick={handleExport}
+                className="btn-3d px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2 shadow-lg"
+              >
                 <Download className="w-5 h-5" />
                 Export
               </button>

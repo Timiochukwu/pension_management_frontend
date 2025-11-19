@@ -21,6 +21,7 @@ import { MembersPage } from './pages/members/MembersPage';
 import { ContributionsPage } from './pages/contributions/ContributionsPage';
 import { BenefitsPage } from './pages/benefits/BenefitsPage';
 import { ReportsPage } from './pages/reports/ReportsPage';
+import { PaymentPage } from './pages/payments/PaymentPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 
 // Create React Query client
@@ -97,6 +98,16 @@ function App() {
               <ProtectedRoute>
                 <DashboardLayout>
                   <ReportsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <PaymentPage />
                 </DashboardLayout>
               </ProtectedRoute>
             }

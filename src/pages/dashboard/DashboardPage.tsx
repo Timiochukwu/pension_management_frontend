@@ -8,7 +8,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Users, DollarSign, FileText, TrendingUp, ArrowUpRight, ArrowDownRight, Activity, Clock } from 'lucide-react';
-import { getDashboardStats, getContributionTrends } from '../../services/dashboardService';
+import { getDashboardStats, getContributionTrends, getRecentActivity } from '../../services/dashboardService';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 export const DashboardPage: React.FC = () => {
@@ -21,6 +21,11 @@ export const DashboardPage: React.FC = () => {
   const { data: trends } = useQuery({
     queryKey: ['contributionTrends'],
     queryFn: () => getContributionTrends('12months'),
+  });
+
+  const { data: recentActivity } = useQuery({
+    queryKey: ['recentActivity'],
+    queryFn: () => getRecentActivity(5),
   });
 
   if (isLoading) {
@@ -307,41 +312,83 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            {[
-              { type: 'contribution', member: '12345', amount: '₦50,000', time: '2 hours ago', color: 'emerald' },
-              { type: 'contribution', member: '12346', amount: '₦75,000', time: '4 hours ago', color: 'blue' },
-              { type: 'claim', member: '12347', amount: '₦120,000', time: '6 hours ago', color: 'purple' },
-              { type: 'contribution', member: '12348', amount: '₦60,000', time: '8 hours ago', color: 'cyan' },
-              { type: 'registration', member: '12349', amount: 'New Member', time: '10 hours ago', color: 'pink' },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="glass-card group hover:shadow-lg transition-all duration-200 rounded-2xl p-4 flex items-center gap-4 cursor-pointer"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-${item.color}-400 to-${item.color}-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
-                  {item.type === 'registration' ? (
-                    <Users className="w-6 h-6 text-white" />
-                  ) : item.type === 'claim' ? (
-                    <FileText className="w-6 h-6 text-white" />
-                  ) : (
-                    <DollarSign className="w-6 h-6 text-white" />
-                  )}
-                </div>
+            {recentActivity && recentActivity.length > 0 ? (
+              recentActivity.map((activity) => {
+                const getActivityColor = (type: string) => {
+                  switch (type) {
+                    case 'CONTRIBUTION':
+                      return 'emerald';
+                    case 'CLAIM':
+                      return 'purple';
+                    case 'REGISTRATION':
+                      return 'pink';
+                    case 'PAYMENT':
+                      return 'blue';
+                    default:
+                      return 'cyan';
+                  }
+                };
 
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                    {item.type === 'contribution' ? 'New contribution received' : item.type === 'claim' ? 'Claim processed' : 'New member registered'}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    Member #{item.member} · {item.amount}
-                  </p>
-                </div>
+                const getActivityIcon = (type: string) => {
+                  switch (type) {
+                    case 'REGISTRATION':
+                      return <Users className="w-6 h-6 text-white" />;
+                    case 'CLAIM':
+                      return <FileText className="w-6 h-6 text-white" />;
+                    default:
+                      return <DollarSign className="w-6 h-6 text-white" />;
+                  }
+                };
 
-                <div className="text-right">
-                  <span className="text-xs text-gray-500 dark:text-gray-500">{item.time}</span>
+                const getTimeAgo = (timestamp: string) => {
+                  const now = new Date();
+                  const then = new Date(timestamp);
+                  const diffMs = now.getTime() - then.getTime();
+                  const diffMins = Math.floor(diffMs / 60000);
+                  const diffHours = Math.floor(diffMins / 60);
+                  const diffDays = Math.floor(diffHours / 24);
+
+                  if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                  if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                  if (diffMins > 0) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+                  return 'Just now';
+                };
+
+                const color = getActivityColor(activity.type);
+
+                return (
+                  <div
+                    key={activity.id}
+                    className="glass-card group hover:shadow-lg transition-all duration-200 rounded-2xl p-4 flex items-center gap-4 cursor-pointer"
+                  >
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-${color}-400 to-${color}-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
+                      {getActivityIcon(activity.type)}
+                    </div>
+
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {activity.description}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        {activity.memberName} · {activity.amount}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500 dark:text-gray-500">{getTimeAgo(activity.timestamp)}</span>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center mb-4">
+                  <Activity className="w-8 h-8 text-purple-600" />
                 </div>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No recent activity</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Activity will appear here as it happens</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

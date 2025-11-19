@@ -8,7 +8,9 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Gift, CheckCircle, XCircle, Clock, AlertCircle, TrendingUp, Filter, Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getAllClaims } from '../../services/benefitService';
+import { exportBenefitClaims } from '../../utils/exportUtils';
 import type { BenefitClaim } from '../../types';
 
 export const BenefitsPage: React.FC = () => {
@@ -18,6 +20,16 @@ export const BenefitsPage: React.FC = () => {
     queryKey: ['claims'],
     queryFn: () => getAllClaims({ page: 0, size: 20 }),
   });
+
+  // Handle export
+  const handleExport = () => {
+    if (!data?.content || data.content.length === 0) {
+      toast.error('No benefit claims to export');
+      return;
+    }
+    exportBenefitClaims(data.content, 'csv');
+    toast.success(`Exported ${data.content.length} benefit claims to CSV`);
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { gradient: string; icon: React.ReactNode }> = {
@@ -131,7 +143,10 @@ export const BenefitsPage: React.FC = () => {
               </p>
             </div>
             <div className="flex gap-3">
-              <button className="btn-3d px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+              <button
+                onClick={handleExport}
+                className="btn-3d px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 flex items-center gap-2 shadow-lg"
+              >
                 <Download className="w-5 h-5" />
                 Export Claims
               </button>

@@ -337,6 +337,25 @@ export interface ChartData {
   }[];
 }
 
+export const ActivityType = {
+  CONTRIBUTION: 'CONTRIBUTION',
+  CLAIM: 'CLAIM',
+  REGISTRATION: 'REGISTRATION',
+  PAYMENT: 'PAYMENT'
+} as const;
+
+export type ActivityType = typeof ActivityType[keyof typeof ActivityType];
+
+export interface RecentActivity {
+  id: number;
+  type: ActivityType;
+  memberId: number;
+  memberName: string;
+  amount: string;
+  description: string;
+  timestamp: string;
+}
+
 // ============================================
 // API RESPONSE TYPES
 // ============================================

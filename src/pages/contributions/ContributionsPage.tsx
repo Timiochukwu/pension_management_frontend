@@ -8,16 +8,31 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Filter, Download, Calendar, CreditCard } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getAllContributions } from '../../services/contributionService';
 import type { Contribution } from '../../types';
+import { Modal } from '../../components/ui/Modal';
+import { CreateContributionForm } from '../../components/contributions/CreateContributionForm';
+import { exportContributions } from '../../utils/exportUtils';
 
 export const ContributionsPage: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['contributions'],
     queryFn: () => getAllContributions({ page: 0, size: 20 }),
   });
+
+  // Handle export
+  const handleExport = () => {
+    if (!data?.content || data.content.length === 0) {
+      toast.error('No contributions to export');
+      return;
+    }
+    exportContributions(data.content, 'csv');
+    toast.success(`Exported ${data.content.length} contributions to CSV`);
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { gradient: string; icon: React.ReactNode }> = {
@@ -126,11 +141,17 @@ export const ContributionsPage: React.FC = () => {
               </p>
             </div>
             <div className="flex gap-3">
-              <button className="btn-3d px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+              <button
+                onClick={handleExport}
+                className="btn-3d px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2 shadow-lg"
+              >
                 <Download className="w-5 h-5" />
                 Export
               </button>
-              <button className="btn-3d px-5 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="btn-3d px-5 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 flex items-center gap-2 shadow-lg"
+              >
                 <Calendar className="w-5 h-5" />
                 Add Contribution
               </button>
@@ -311,6 +332,16 @@ export const ContributionsPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Add Contribution Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add New Contribution"
+        size="lg"
+      >
+        <CreateContributionForm onSuccess={() => setIsModalOpen(false)} />
+      </Modal>
     </div>
   );
 };
