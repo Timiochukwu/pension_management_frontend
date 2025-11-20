@@ -11,7 +11,7 @@ import { CreditCard, DollarSign, CheckCircle, Clock, XCircle, Calendar, Trending
 import toast from 'react-hot-toast';
 import { getAllMembers } from '../../services/memberService';
 import { initializePaystackPayment, initializeFlutterwavePayment, getAllPayments } from '../../services/paymentService';
-import { PaymentGateway } from '../../types';
+import { PaymentGateway, PaymentRequest } from '../../types';
 
 export const PaymentPage: React.FC = () => {
   const [selectedGateway, setSelectedGateway] = useState<'PAYSTACK' | 'FLUTTERWAVE'>('PAYSTACK');
@@ -31,9 +31,22 @@ export const PaymentPage: React.FC = () => {
     queryFn: getAllPayments,
   });
 
+  // Validate payment redirect URL for security
+  const isValidPaymentUrl = (url: string): boolean => {
+    try {
+      const parsedUrl = new URL(url);
+      const allowedDomains = ['paystack.com', 'flutterwave.com'];
+      return allowedDomains.some(domain =>
+        parsedUrl.hostname === domain || parsedUrl.hostname.endsWith(`.${domain}`)
+      );
+    } catch {
+      return false;
+    }
+  };
+
   // Initialize payment mutation
   const initializePayment = useMutation({
-    mutationFn: (data: any) => {
+    mutationFn: (data: PaymentRequest) => {
       if (selectedGateway === 'PAYSTACK') {
         return initializePaystackPayment(data);
       } else {
@@ -41,9 +54,19 @@ export const PaymentPage: React.FC = () => {
       }
     },
     onSuccess: (response) => {
-      if (response.authorizationUrl || response.link) {
-        // Redirect to payment gateway
-        window.location.href = response.authorizationUrl || response.link;
+      const redirectUrl = response.authorizationUrl || response.link;
+      if (redirectUrl) {
+        // Validate URL before redirecting to prevent open redirect vulnerability
+        if (isValidPaymentUrl(redirectUrl)) {
+          // Reset form state before redirecting
+          setSelectedMemberId(0);
+          setAmount('');
+          setPaymentMethod('card');
+          window.location.href = redirectUrl;
+        } else {
+          toast.error('Invalid payment gateway URL received. Please contact support.');
+          console.error('Invalid payment URL:', redirectUrl);
+        }
       }
     },
     onError: (error: any) => {

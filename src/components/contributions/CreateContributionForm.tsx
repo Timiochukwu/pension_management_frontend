@@ -33,7 +33,6 @@ interface CreateContributionFormProps {
 
 export const CreateContributionForm: React.FC<CreateContributionFormProps> = ({ onSuccess }) => {
   const queryClient = useQueryClient();
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch all members for the dropdown
   const { data: membersData } = useQuery({
@@ -41,7 +40,7 @@ export const CreateContributionForm: React.FC<CreateContributionFormProps> = ({ 
     queryFn: () => getAllMembers({ page: 0, size: 100 }),
   });
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<ContributionFormData>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<ContributionFormData>({
     resolver: zodResolver(contributionSchema),
     defaultValues: {
       contributionType: ContributionType.REGULAR,
@@ -56,6 +55,7 @@ export const CreateContributionForm: React.FC<CreateContributionFormProps> = ({ 
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       queryClient.invalidateQueries({ queryKey: ['recentActivity'] });
       toast.success('Contribution created successfully!');
+      reset(); // Reset form to default values
       onSuccess();
     },
     onError: (error: any) => {

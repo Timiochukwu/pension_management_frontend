@@ -32,19 +32,26 @@ export const convertToCSV = (data: any[], headers: string[]): string => {
  * Download data as CSV file
  */
 export const downloadCSV = (data: any[], filename: string, headers: string[]) => {
-  const csv = convertToCSV(data, headers);
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
+  try {
+    const csv = convertToCSV(data, headers);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
 
-  if (link.download !== undefined) {
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${filename}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      throw new Error('Browser does not support file downloads');
+    }
+  } catch (error) {
+    console.error('Error downloading CSV:', error);
+    throw new Error('Failed to download CSV file');
   }
 };
 
@@ -52,19 +59,26 @@ export const downloadCSV = (data: any[], filename: string, headers: string[]) =>
  * Download data as JSON file
  */
 export const downloadJSON = (data: any[], filename: string) => {
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const link = document.createElement('a');
+  try {
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const link = document.createElement('a');
 
-  if (link.download !== undefined) {
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${filename}.json`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${filename}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      throw new Error('Browser does not support file downloads');
+    }
+  } catch (error) {
+    console.error('Error downloading JSON:', error);
+    throw new Error('Failed to download JSON file');
   }
 };
 
