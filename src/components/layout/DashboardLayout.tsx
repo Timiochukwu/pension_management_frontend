@@ -17,7 +17,9 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Shield,
+  TrendingUp
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { ThemeToggle } from './ThemeToggle';
@@ -39,6 +41,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     { name: 'Contributions', href: '/contributions', icon: DollarSign },
     { name: 'Benefit Claims', href: '/benefits', icon: FileText },
     { name: 'Payments', href: '/payments', icon: CreditCard },
+    { name: 'Fraud Detection', href: '/fraud-detection', icon: Shield },
+    { name: 'Risk Assessment', href: '/risk-assessment', icon: TrendingUp },
     { name: 'Reports', href: '/reports', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];

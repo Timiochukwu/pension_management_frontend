@@ -22,6 +22,8 @@ import { ContributionsPage } from './pages/contributions/ContributionsPage';
 import { BenefitsPage } from './pages/benefits/BenefitsPage';
 import { ReportsPage } from './pages/reports/ReportsPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
+import { FraudDetectionPage } from './pages/fraud/FraudDetectionPage';
+import { RiskAssessmentPage } from './pages/fraud/RiskAssessmentPage';
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -107,6 +109,26 @@ function App() {
               <ProtectedRoute>
                 <DashboardLayout>
                   <SettingsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/fraud-detection"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <FraudDetectionPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/risk-assessment"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <RiskAssessmentPage />
                 </DashboardLayout>
               </ProtectedRoute>
             }
