@@ -9,9 +9,13 @@ import type { Payment, PaymentRequest } from '../types';
 
 /**
  * Initialize Paystack payment
+ * Uses generic /payments/initialize endpoint with gateway parameter
  */
 export const initializePaystackPayment = async (data: PaymentRequest): Promise<any> => {
-  const response = await apiClient.post('/payments/paystack/initialize', data);
+  const response = await apiClient.post('/payments/initialize', {
+    ...data,
+    gateway: 'PAYSTACK'
+  });
   return response.data;
 };
 
@@ -19,15 +23,19 @@ export const initializePaystackPayment = async (data: PaymentRequest): Promise<a
  * Verify Paystack payment
  */
 export const verifyPaystackPayment = async (reference: string): Promise<Payment> => {
-  const response = await apiClient.get<Payment>(`/payments/paystack/verify/${reference}`);
+  const response = await apiClient.get<Payment>(`/payments/verify/${reference}`);
   return response.data;
 };
 
 /**
  * Initialize Flutterwave payment
+ * Uses generic /payments/initialize endpoint with gateway parameter
  */
 export const initializeFlutterwavePayment = async (data: PaymentRequest): Promise<any> => {
-  const response = await apiClient.post('/payments/flutterwave/initialize', data);
+  const response = await apiClient.post('/payments/initialize', {
+    ...data,
+    gateway: 'FLUTTERWAVE'
+  });
   return response.data;
 };
 
@@ -35,7 +43,7 @@ export const initializeFlutterwavePayment = async (data: PaymentRequest): Promis
  * Verify Flutterwave payment
  */
 export const verifyFlutterwavePayment = async (transactionId: string): Promise<Payment> => {
-  const response = await apiClient.get<Payment>(`/payments/flutterwave/verify/${transactionId}`);
+  const response = await apiClient.get<Payment>(`/payments/verify/${transactionId}`);
   return response.data;
 };
 
@@ -57,8 +65,19 @@ export const getPaymentById = async (id: number): Promise<Payment> => {
 
 /**
  * Get payments by member
+ * NOTE: Backend endpoint not yet implemented - returns all payments filtered client-side
  */
 export const getPaymentsByMember = async (memberId: number): Promise<Payment[]> => {
-  const response = await apiClient.get<Payment[]>(`/payments/member/${memberId}`);
-  return response.data;
+  try {
+    // Try backend endpoint first (when implemented)
+    const response = await apiClient.get<Payment[]>(`/payments/member/${memberId}`);
+    return response.data;
+  } catch (error: any) {
+    // Fallback: Get all payments and filter client-side
+    if (error.response?.status === 404) {
+      const allPayments = await getAllPayments();
+      return allPayments.filter(payment => payment.memberId === memberId);
+    }
+    throw error;
+  }
 };
