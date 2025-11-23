@@ -395,3 +395,60 @@ export interface SearchParams {
   sort?: string;
   filters?: Record<string, any>;
 }
+
+// ============================================
+// FRAUD DETECTION & RISK ASSESSMENT TYPES
+// ============================================
+
+export interface FraudDetectionRequest {
+  memberId: number;
+  amount: number;
+  paymentMethod: string;
+  ipAddress?: string;
+  userAgent?: string;
+  timestamp?: string;
+  deviceFingerprint?: string;
+  velocityScore?: number;
+  averageTransactionAmount?: number;
+  transactionCount24h?: number;
+  isNewDevice?: boolean;
+  isNewLocation?: boolean;
+  amountDeviationFromAverage?: number;
+}
+
+export interface FraudDetectionResponse {
+  fraudulent: boolean;
+  riskScore: number;
+  riskLevel: RiskLevel;
+  fraudIndicators: string[];
+  recommendation: string;
+  timestamp: string;
+  confidenceScore: number;
+  modelVersion?: string;
+}
+
+export const RiskLevel = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const;
+
+export type RiskLevel = typeof RiskLevel[keyof typeof RiskLevel];
+
+export interface RiskAssessmentResponse {
+  memberId: number;
+  overallRiskScore: number;
+  riskLevel: RiskLevel;
+  riskFactors: RiskFactor[];
+  recommendations: string[];
+  assessmentDate: string;
+  lastUpdated: string;
+}
+
+export interface RiskFactor {
+  factor: string;
+  score: number;
+  severity: RiskLevel;
+  description: string;
+}
