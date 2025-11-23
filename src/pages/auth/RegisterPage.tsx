@@ -65,10 +65,12 @@ export const RegisterPage: React.FC = () => {
     try {
       const { confirmPassword, ...registerData } = data;
       await registerService(registerData as RegisterRequest);
-      toast.success('Registration successful! Please login.');
-      navigate('/login');
+      toast.success('🎉 Welcome to PensionPro! Registration successful.');
+      // Navigate to dashboard since user is automatically logged in
+      navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
+      toast.error('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

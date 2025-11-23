@@ -18,12 +18,28 @@ import type { LoginRequest, LoginResponse, RegisterRequest, User } from '../type
  * Stores token in localStorage for subsequent requests
  */
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
+  console.log('🚀 AuthService sending to /auth/login:', credentials);
+  const response = await apiClient.post<any>('/auth/login', credentials);
+  console.log('✅ Login response:', response.data);
 
-  // Store token and user in localStorage
-  if (response.data.token) {
-    localStorage.setItem('authToken', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+  // Backend returns { accessToken, refreshToken, tokenType, username, email }
+  const { accessToken, username, email } = response.data;
+
+  // Store token in localStorage
+  if (accessToken) {
+    localStorage.setItem('authToken', accessToken);
+
+    // Create user object from response
+    const user = {
+      id: 0, // Will be populated from API later if needed
+      email: email,
+      firstName: username, // Use username as firstName for now
+      lastName: '',
+      role: 'MEMBER' as const,
+      createdAt: new Date().toISOString()
+    };
+
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   return response.data;
@@ -35,8 +51,31 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
  * Creates a new user account
  * Automatically logs in the user after registration
  */
-export const register = async (data: RegisterRequest): Promise<User> => {
-  const response = await apiClient.post<User>('/auth/register', data);
+export const register = async (data: RegisterRequest): Promise<any> => {
+  console.log('🚀 AuthService sending to /auth/register:', data);
+  const response = await apiClient.post<any>('/auth/register', data);
+  console.log('✅ Registration response:', response.data);
+
+  // Backend returns { accessToken, refreshToken, tokenType, username, email }
+  const { accessToken, username, email } = response.data;
+
+  // Store token in localStorage
+  if (accessToken) {
+    localStorage.setItem('authToken', accessToken);
+
+    // Create user object from response
+    const user = {
+      id: 0,
+      email: email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      role: 'MEMBER' as const,
+      createdAt: new Date().toISOString()
+    };
+
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
   return response.data;
 };
 

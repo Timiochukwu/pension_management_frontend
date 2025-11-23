@@ -42,13 +42,18 @@ export const LoginPage: React.FC = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const response = await login(data as LoginRequest);
-      setUser(response.user);
-      toast.success('Login successful!');
+      await login(data as LoginRequest);
+      // Get user from localStorage (set by authService)
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        setUser(JSON.parse(userStr));
+      }
+      toast.success('✅ Login successful! Welcome back.');
       navigate('/dashboard');
     } catch (error) {
       // Error handled by axios interceptor
       console.error('Login failed:', error);
+      toast.error('Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
